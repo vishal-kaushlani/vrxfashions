@@ -58,9 +58,7 @@ class CategoryController extends Controller
                 // Image::make($sPath)->resize(450,600)->save($dPath);
                 $manager = new ImageManager(new Driver());
                 $img = $manager->read($sPath);
-                $img->fit(450, 600, function ($constraint) {
-                    $constraint->upsize();
-                });
+                $img->resize(450, 600);
                 $img->toJpeg(80)->save($dPath);
                 $category->image = $newImageName;
                 $category->save();
@@ -151,14 +149,20 @@ class CategoryController extends Controller
         }
     }
     public function destroy($id, Request $request){
-        $categpry = Category::find($id);
+        $category = Category::find($id);
         if(empty($category)){
-            return redirect()->route('category.index');
+            $request->session()->flash('error','Category not found');
+            return response()->json([
+                'status' => false,
+                'notFound' => true,
+                'message' => 'Category not found!'
+            ]);
         }
+        $oldImage = $category->image;
         $deleted = File::delete(public_path() . '/uploads/category/thumb/' . $oldImage);
         File::delete(public_path().'/uploads/category/'.$oldImage);
-
-        $categpry->delete();
+        $request->session()->flash('success','Category Deleted successfully');
+        $category->delete();
         return response()->json([
             'status' => true,
             'message' => 'Category deleted successfully'

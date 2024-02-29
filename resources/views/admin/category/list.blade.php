@@ -110,13 +110,18 @@
             type:'delete',
             data: {},
             dataType:'json',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success:function(response){
                 $('button[type=submit]').prop('disabled',false);
-                if(response['status']=='true'){
+                if(response['status']==true){
                     window.location.href="{{ route('categories.index')}}";
                 }
                 else{
-
+                    if(response['notFound']==true){
+                        window.location.href="{{ route('categories.index')}}";
+                    }
                 }
 
             },error: function(jqXHR, exception){
