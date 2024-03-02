@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\TempImagesController;
 
 Route::get('/', function () {
@@ -27,6 +28,9 @@ Route::group(['prefix'=>'admin'],function(){
         Route::get('/categories/{category}/edit',[CategoryController::class,'edit'])->name('categories.edit');
         Route::put('/categories/{category}',[CategoryController::class,'update'])->name('categories.update');
         Route::delete('/categories/{category}',[CategoryController::class,'destroy'])->name('categories.delete');
+
+        //SubCategory Route
+        Route::get('/sub_categories/create',[SubCategoryController::class,'create'])->name('sub_categories.create');
 
         //temp-images.create
         Route::post('/upload-temp-image',[TempImagesController::class,'create'])->name('temp-images.create');
