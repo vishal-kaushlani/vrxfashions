@@ -25,8 +25,12 @@
                         <div class="mb-3">
                             <label for="name">Category</label>
                             <select name="category" id="category" class="form-control">
-                                <option value="">Electronics</option>
-                                <option value="">Mobile</option>
+                                if($categories->isNotEmpty()){
+                                    @foreach ($categories as $category)
+                                    <option value="{{$category->id}}">{{$category->name}}</option>
+                                    @endforeach
+
+                                }
                             </select>
                         </div>
                     </div>
@@ -38,8 +42,17 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="email">Slug</label>
+                            <label for="slug">Slug</label>
                             <input type="text" name="slug" id="slug" class="form-control" placeholder="Slug">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="email">Status</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="1">Active</option>
+                                <option value="0">Block</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -55,4 +68,21 @@
 <!-- /.content -->
 @endsection
 @section('customJS')
+<script>
+$('#name').change(function(){
+    var element = $(this);
+    $.ajax({
+        url:'{{route("getSlug")}}',
+        type:'get',
+        data: {title : element.val()},
+        dataType:'json',
+        success:function(response){
+            if(response['status']==true){
+                $('#slug').val(response["slug"])
+            }
+        }
+    });
+})
+
+</script>
 @endsection
