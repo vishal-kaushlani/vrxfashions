@@ -58,4 +58,68 @@ class SubCategoryController extends Controller
         ]);
        }
     }
+    public function edit($id, Request $request){
+        $subcategory = SubCategory::find($id);
+        if(empty($subcategory)){
+            $request->session()->flash('error','Record not Found');
+            return redirect()->route('sub_categories.index');
+        }
+        $category = Category::orderBy('name','ASC')->get();
+        $data['categories'] = $category;
+        $data['subCategory'] = $subcategory;
+        return view('admin.sub_category.edit',$data);
+    }
+    public function update($id, Request $request){
+        $subcategory = SubCategory::find($id);
+        if(empty($subcategory)){
+            $request->session()->flash('error','Record not Found');
+            return response([
+                'status' => false,
+                'notFound' => true,
+            ]);
+        }
+        $validator = Validator::make($request->all(),[
+         'name' => 'required|alpha',
+         'slug' => 'required|unique:sub_categories,slug,'.$subcategory->id.',id',
+         'category' => 'required',
+         'status' => 'required'
+        ]);
+
+        if($validator->passes() ){
+             $subcategory->name = $request->name;
+             $subcategory->slug = $request->slug;
+             $subcategory->status = $request->status;
+             $subcategory->category_id = $request->category;
+             $subcategory->save();
+
+             $request->session()->flash('success','Sub Category updated successfully');
+             return response([
+                 'status' => true,
+                 'message' => 'Sub Category updated successfully!'
+             ]);
+        }
+        else{
+            return response([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+     }
+     public function destroy($id, Request $request){
+        $subcategory = SubCategory::find($id);
+        if(empty($subcategory)){
+            $request->session()->flash('error','Sub Category not found');
+            return response()->json([
+                'status' => false,
+                'notFound' => true,
+                'message' => 'Sub Category not found!'
+            ]);
+        }
+        $request->session()->flash('success',' Sub Category Deleted successfully');
+        $subcategory->delete();
+        return response()->json([
+            'status' => true,
+            'message' => 'Sub Category deleted successfully'
+        ]);
+    }
 }
