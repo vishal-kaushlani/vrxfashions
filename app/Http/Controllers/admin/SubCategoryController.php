@@ -92,7 +92,7 @@ class SubCategoryController extends Controller
              $subcategory->category_id = $request->category;
              $subcategory->save();
 
-             $request->session()->flash('success','Sub Category updated successfully');
+             $request->session()->flash('success','Sub Category updated successfully!');
              return response([
                  'status' => true,
                  'message' => 'Sub Category updated successfully!'
